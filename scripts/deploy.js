@@ -1,21 +1,29 @@
+// Importing the Hardhat library
 const hre = require("hardhat");
 
+// Function to convert a numerical value to Ethereum wei units
 const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), "ether");
 };
 
+// Asynchronous main function
 async function main() {
+  // Getting the deployer's signer account
   const [deployer] = await ethers.getSigners();
+
+  // Constants for token name and symbol
   const NAME = "TokenMaster";
   const SYMBOL = "TM";
 
-  // Deploy contract
+  // Deploying the contract
   const TokenMaster = await ethers.getContractFactory("TokenMaster");
   const tokenMaster = await TokenMaster.deploy(NAME, SYMBOL);
   await tokenMaster.deployed();
 
+  // Logging contract deployment address
   console.log(`Deployed TokenMaster Contract at: ${tokenMaster.address}\n`);
 
+  // Array of occasions with details
   const occasions = [
     {
       name: "MI vs CSK",
@@ -51,7 +59,9 @@ async function main() {
     },
   ];
 
-  for (var i = 0; i < 4; i++) {
+  // Loop through each occasion and list it
+  for (var i = 0; i < occasions.length; i++) {
+    // Listing an occasion by calling the list function of the contract
     const transaction = await tokenMaster
       .connect(deployer)
       .list(
@@ -63,10 +73,12 @@ async function main() {
         occasions[i].location
       );
 
+    // Wait for the transaction to be confirmed
     await transaction.wait();
   }
 }
 
+// Call the main function and handle errors
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;

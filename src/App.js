@@ -3,9 +3,9 @@ import { ethers } from "ethers";
 
 // Components
 import Navigation from "./components/Navigation";
-import Sort from "./components/Sort";
 import Card from "./components/Card";
 import SeatChart from "./components/SeatChart";
+import Footer from "./components/Footer";
 
 // ABIs
 import TokenMaster from "./abis/TokenMaster.json";
@@ -16,20 +16,21 @@ import config from "./config.json";
 function App() {
   // To Dos
   // 1. Add search funtionality
-  // 2. Add filter functionality
-  // 3. Add resell funtionality
-  // 4. Add the calender notification for the show booked
-  // 5. Introduce add event functionality (only for admin)
+  // 2. Add resell funtionality
+  // 3. Introduce add event functionality (only for admin)
 
+  // State variables for Ethereum connection and contract interaction
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
 
   const [tokenMaster, setTokenMaster] = useState(null);
   const [occasions, setOccasions] = useState([]);
 
+  // State variable to store current occasion details and toggle seat chart visibility
   const [occasion, setOccasion] = useState({});
   const [toggle, setToggle] = useState(false);
 
+  // Function to load blockchain data
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider);
@@ -68,16 +69,24 @@ function App() {
   return (
     <div>
       <header>
-        <Navigation account={account} setAccount={setAccount} />
+        {/* Navigation component */}
+        <Navigation
+          account={account}
+          setAccount={setAccount}
+          occasions={occasions}
+          tokenMaster={tokenMaster}
+          provider={provider}
+          setOccasion={setOccasion}
+        />
 
+        {/* Page title */}
         <h2 className="header__title">
           <strong>Event</strong> Tickets
         </h2>
       </header>
 
-      {/* <Sort /> */}
-
       <div className="cards">
+        {/* Mapping occasions to Card components */}
         {occasions.map((occasion, index) => (
           <Card
             occasion={occasion}
@@ -93,6 +102,7 @@ function App() {
         ))}
       </div>
 
+      {/* Display SeatChart component if toggle state is true */}
       {toggle && (
         <SeatChart
           occasion={occasion}
@@ -101,6 +111,7 @@ function App() {
           setToggle={setToggle}
         />
       )}
+      <Footer />
     </div>
   );
 }
